@@ -1,14 +1,193 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sistema Electoral - V1</title>
-  <link rel="stylesheet" href="/src/styles/main.css" />
-  <link rel="icon" href="/public/favicon.ico" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Votar es Elegir - Parambiental</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+  body, html {
+    margin: 0; padding: 0; height: 100%; font-family: 'Roboto', sans-serif;
+    background: #f5f7fa;
+    color: #222;
+  }
+  .welcome-screen {
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    height: 100vh; background: #0066cc; color: white; text-align: center;
+  }
+  .welcome-screen img {
+    width: 80px; height: 80px; margin-bottom: 20px;
+  }
+  .welcome-screen h1 {
+    font-size: 2.5rem; margin: 0 0 15px 0;
+    user-select: none;
+  }
+  .welcome-screen button {
+    background: white; color: #0066cc; font-size: 1.2rem; font-weight: bold;
+    padding: 12px 30px; border: none; border-radius: 25px;
+    cursor: pointer; transition: background-color 0.3s ease;
+  }
+  .welcome-screen button:hover {
+    background: #004a99; color: white;
+  }
+
+  /* --- APP LAYOUT --- */
+  .app {
+    display: none;
+    height: 100vh; flex-direction: column;
+  }
+  .toolbar {
+    background: #004a99; color: white;
+    display: flex; align-items: center; padding: 0 20px;
+    height: 50px;
+  }
+  .toolbar h2 {
+    flex-grow: 1; font-weight: 500; user-select: none;
+  }
+
+  main {
+    padding: 20px; overflow-y: auto; flex-grow: 1;
+    background: #fff;
+  }
+
+  /* List styles */
+  section {
+    margin-bottom: 25px;
+  }
+  section h3 {
+    margin-bottom: 8px; border-bottom: 2px solid #004a99; padding-bottom: 4px;
+  }
+  ul.color-list {
+    list-style: none; padding: 0; margin: 0; display: flex; gap: 15px;
+  }
+  ul.color-list li {
+    display: flex; align-items: center; gap: 8px;
+    font-weight: 600; user-select: none;
+  }
+  .color-box {
+    width: 22px; height: 22px; border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+
+  /* Input */
+  label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 6px;
+  }
+  input[type=tel] {
+    width: 200px;
+    padding: 6px 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 15px;
+  }
+
+</style>
 </head>
 <body>
-  <div id="app"></div> <!-- Este es el único div necesario -->
-  <script type="module" src="/src/main.js"></script>
+
+<!-- Welcome screen -->
+<div class="welcome-screen" id="welcomeScreen">
+  <img src="https://img.icons8.com/ios-filled/100/ffffff/vote.png" alt="Icono votar" />
+  <h1>Votar es Elegir</h1>
+  <button id="enterBtn">Ingresar</button>
+</div>
+
+<!-- Main app -->
+<div class="app" id="appContainer">
+  <div class="toolbar">
+    <h2>Parambiental - Control Electoral</h2>
+  </div>
+  <main>
+    <section>
+      <label for="originNumber">Número telefónico de origen (de donde salen los mensajes):</label>
+      <input type="tel" id="originNumber" placeholder="+595XXXXXXXX" />
+    </section>
+    <section>
+      <h3>Colores del Partido Político</h3>
+      <ul class="color-list" id="partidosList"></ul>
+    </section>
+    <section>
+      <h3>Colores del Movimiento</h3>
+      <ul class="color-list" id="movimientosList"></ul>
+    </section>
+    <section>
+      <h3>Colores del Candidato</h3>
+      <ul class="color-list" id="candidatosList"></ul>
+    </section>
+  </main>
+</div>
+
+<script>
+  // Datos iniciales de ejemplo
+  const partidos = [
+    { nombre: "Partido Azul", color: "#0044cc" },
+    { nombre: "Partido Rojo", color: "#cc0000" },
+    { nombre: "Partido Verde", color: "#009933" }
+  ];
+  const movimientos = [
+    { nombre: "Movimiento Libertad", color: "#ff9900" },
+    { nombre: "Movimiento Justicia", color: "#9900cc" }
+  ];
+  const candidatos = [
+    { nombre: "Juan Pérez", color: "#336699" },
+    { nombre: "María López", color: "#cc3366" },
+    { nombre: "Carlos Gómez", color: "#339966" }
+  ];
+
+  // Función para cargar listas con colores y nombres
+  function cargarListas() {
+    const partidosUl = document.getElementById("partidosList");
+    const movimientosUl = document.getElementById("movimientosList");
+    const candidatosUl = document.getElementById("candidatosList");
+
+    partidosUl.innerHTML = "";
+    movimientosUl.innerHTML = "";
+    candidatosUl.innerHTML = "";
+
+    partidos.forEach(p => {
+      const li = document.createElement("li");
+      const box = document.createElement("span");
+      box.className = "color-box";
+      box.style.backgroundColor = p.color;
+      li.appendChild(box);
+      li.appendChild(document.createTextNode(p.nombre));
+      partidosUl.appendChild(li);
+    });
+    movimientos.forEach(m => {
+      const li = document.createElement("li");
+      const box = document.createElement("span");
+      box.className = "color-box";
+      box.style.backgroundColor = m.color;
+      li.appendChild(box);
+      li.appendChild(document.createTextNode(m.nombre));
+      movimientosUl.appendChild(li);
+    });
+    candidatos.forEach(c => {
+      const li = document.createElement("li");
+      const box = document.createElement("span");
+      box.className = "color-box";
+      box.style.backgroundColor = c.color;
+      li.appendChild(box);
+      li.appendChild(document.createTextNode(c.nombre));
+      candidatosUl.appendChild(li);
+    });
+  }
+
+  // Eventos para transición Welcome -> App
+  const enterBtn = document.getElementById("enterBtn");
+  const welcomeScreen = document.getElementById("welcomeScreen");
+  const appContainer = document.getElementById("appContainer");
+
+  enterBtn.addEventListener("click", () => {
+    welcomeScreen.style.display = "none";
+    appContainer.style.display = "flex";
+    cargarListas();
+  });
+
+</script>
+
 </body>
 </html>
