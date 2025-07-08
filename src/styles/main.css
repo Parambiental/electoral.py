@@ -1,61 +1,254 @@
+/* src/styles/main.css */
 body {
-  font-family: 'Inter', Arial, sans-serif;
-  background: #f6f6f6;
-  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fafafa;
   color: #222;
+  margin: 0;
+  padding: 0;
 }
-.main-container {
-  max-width: 900px;
-  margin: 30px auto;
-  padding: 16px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px #0001;
+
+/* Layout principal con sidebar */
+.app-layout {
+  display: flex;
+  min-height: 100vh; /* Ocupa al menos toda la altura de la ventana */
+}
+
+.sidebar {
+  width: 220px;
+  background-color: #003366; /* Azul oscuro para la barra lateral */
+  color: white;
+  padding: 20px 0;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  flex-shrink: 0; /* No se encoge */
 }
-.candidate-form, .message-preview {
-  margin-bottom: 16px;
-}
-.candidate-form input, .candidate-form button {
-  display: block;
-  width: 100%;
-  margin-bottom: 8px;
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-}
-.candidate-form button {
-  background: #006699;
-  color: #fff;
+
+.nav-btn {
+  background: none;
   border: none;
-  font-weight: bold;
+  color: white;
+  padding: 15px 20px;
+  text-align: left;
+  font-size: 1.1em;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
-.electors-table {
+
+.nav-btn:hover {
+  background-color: #004d80; /* Tono más oscuro al pasar el ratón */
+}
+
+.nav-btn.active {
+  background-color: #00509e; /* Tono de azul para el botón activo */
+  font-weight: bold;
+}
+
+.main-content {
+  flex-grow: 1; /* Ocupa el espacio restante */
+  padding: 20px;
+  overflow-y: auto; /* Permite scroll si el contenido es largo */
+}
+
+/* Estilos de sección (para los componentes) */
+section {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  color: #003366;
+  margin-top: 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+/* Botones generales */
+.btn {
+  background-color: #3498db; /* Azul estándar */
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+.btn:hover {
+  background-color: #217dbb;
+}
+
+.btn-small {
+  padding: 5px 10px;
+  font-size: 0.9em;
+  margin-right: 5px; /* Espacio entre botones pequeños */
+}
+
+.btn-whatsapp {
+  background-color: #28a745; /* Verde de WhatsApp */
+}
+.btn-whatsapp:hover {
+  background-color: #218838;
+}
+
+/* Tabla */
+.table-wrapper {
+  overflow-x: auto; /* Permite scroll horizontal en tablas */
+  margin-top: 15px;
+}
+table {
   width: 100%;
   border-collapse: collapse;
-  background: #fafafa;
+  background: white;
 }
-.electors-table th, .electors-table td {
-  border: 1px solid #eee;
-  padding: 7px;
+th, td {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+  vertical-align: middle;
+  font-size: 14px;
 }
-.electors-table th {
-  background: #f0f0f0;
+th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+  color: #333;
 }
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+tr:hover {
+  background-color: #f0f0f0;
+}
+
+
+/* Inputs y formularios */
+form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+  margin-top: 10px;
+}
+
+form input[type="text"],
+form input[type="file"],
+form select {
+  padding: 10px;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: calc(100% - 22px); /* Ancho completo menos padding y borde */
+  box-sizing: border-box; /* Incluye padding y borde en el ancho */
+  margin-bottom: 15px;
+}
+
+form button[type="submit"] {
+  margin-top: 20px;
+  width: auto;
+}
+
+/* Specific styles for PartyPanel color input */
+input[type="color"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 32px;
+  height: 32px;
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  vertical-align: middle;
+  margin: 0; /* Remove default margin */
+}
+input[type="color"]::-webkit-color-swatch {
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+input[type="color"]::-moz-color-swatch {
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+input[type="color"]::-moz-color-swatch-wrapper {
+  padding: 0;
+}
+
+/* Message Preview Bubble */
+.message-preview-content {
+  background-color: #e5ddd5; /* Fondo tipo chat */
+  padding: 15px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: flex-start; /* Alinea la burbuja a la izquierda */
+  min-height: 250px;
+  align-items: flex-start;
+}
+
 .bubble {
-  background: #dcf8c6;
+  background: #dcf8c6; /* Color de burbuja de WhatsApp */
   border-radius: 10px 10px 0 10px;
-  padding: 14px;
-  margin: 8px 0;
-  font-size: 15px;
-  box-shadow: 0 1px 2px #0001;
-  white-space: pre-line;
+  padding: 15px;
+  font-size: 1em;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  max-width: 85%; /* Ancho de la burbuja */
+  word-wrap: break-word; /* Rompe palabras largas */
 }
-@media (max-width: 700px) {
-  .main-container {
-    padding: 5px;
+
+.bubble img {
+  display: block;
+  margin-top: 15px;
+  border-radius: 8px;
+  width: 100%; /* Ajusta al ancho de la burbuja */
+  max-width: 400px; /* Máximo ancho de la imagen */
+  aspect-ratio: 2.2 / 1; /* Aspecto horizontal (más ancho que alto) */
+  object-fit: cover; /* Cubre el área manteniendo la proporción */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .app-layout {
+    flex-direction: column; /* La barra lateral se pone arriba */
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    flex-direction: row; /* Botones en fila */
+    padding: 10px 0;
+    overflow-x: auto; /* Scroll horizontal si hay muchos botones */
+    justify-content: flex-start; /* Alinea botones al inicio */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .nav-btn {
+    flex-shrink: 0; /* No se encogen */
+    padding: 10px 15px;
+    font-size: 0.9em;
+    white-space: nowrap; /* Evita que el texto del botón se rompa */
+  }
+
+  .main-content {
+    padding: 15px;
+  }
+
+  section {
+    padding: 15px;
+  }
+
+  /* Ajustes de tabla para móviles */
+  .table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Suaviza el scroll en iOS */
+  }
+
+  table {
+    min-width: 600px; /* Ancho mínimo para la tabla en móviles */
   }
 }
