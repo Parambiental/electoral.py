@@ -5,10 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Sistema Electoral - V1</title>
   <link rel="stylesheet" href="/src/styles/main.css" />
-  <link rel="icon" href="/public/favicon.ico" /> <!-- Asegúrate de tener public/favicon.ico -->
+  <link rel="icon" href="/public/favicon.ico" />
 </head>
 <body>
-  <div id="app"></div>
+  <div class="layout">
+    <aside class="sidebar">
+      <h2 class="sidebar-title">Panel Electoral</h2>
+      <nav class="sidebar-nav">
+        <ul>
+          <li><a href="#electores" class="nav-link active">Electores</a></li>
+          <li><a href="#candidatos" class="nav-link">Candidatos</a></li>
+          <li><a href="#movimientos" class="nav-link">Movimientos</a></li>
+          <li><a href="#partidos" class="nav-link">Partidos</a></li>
+          <li><a href="#resumen" class="nav-link">Resumen</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <main class="main-content" id="app"></main>
+  </div>
+
   <script type="module" src="/src/main.js"></script>
+  <script>
+    // Marcar enlace activo dinámicamente
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      });
+    });
+  </script>
 </body>
 </html>
