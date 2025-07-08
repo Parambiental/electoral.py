@@ -1,0 +1,5 @@
+{
+  "success": false,
+  "error": "Icon vote not found",
+  "code": "ICON_NAME_NOT_FOUND"
+}
