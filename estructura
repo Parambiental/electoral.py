@@ -1,0 +1,19 @@
+electoral-app/
+├── public/
+│   └── favicon.ico
+├── src/
+│   ├── components/
+│   │   ├── CandidateForm.js
+│   │   ├── ElectorsTable.js
+│   │   ├── MessagePreview.js
+│   │   └── PartyPanel.js
+│   ├── styles/
+│   │   └── main.css
+│   ├── data/
+│   │   └── mockData.js
+│   ├── App.js
+│   └── main.js
+├── index.html
+├── package.json
+├── README.md
+└── vercel.json
