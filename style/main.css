@@ -55,38 +55,6 @@
   background-color: var(--secondary-color);
 }
 
-}
-
-.sidebar-nav li {
-  margin-bottom: 0.5rem;
-}
-
-.nav-link {
-  color: #ccc;
-  text-decoration: none;
-  padding: 0.5rem 1rem;
-  display: block;
-  border-radius: 4px;
-  transition: background 0.2s;
-}
-
-.nav-link:hover {
-  background-color: #444;
-  color: #fff;
-}
-
-.nav-link.active {
-  background-color: orange;
-  color: #000;
-  font-weight: bold;
-}
-
-.main-content {
-  flex-grow: 1;
-  padding: 1rem;
-  overflow-y: auto;
-  background-color: var(--secondary-color);
-}
 /* Pantalla de bienvenida */
 .welcome-screen {
   display: flex;
