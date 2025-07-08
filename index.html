@@ -1,54 +1,422 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Votar es Elegir - Parambiental</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Parambiental - Visualización Electoral</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+  body, html {
+    margin: 0; padding: 0; height: 100%; font-family: 'Roboto', sans-serif;
+    background: #f5f7fa; color: #222;
+  }
+
+  /* Pantalla bienvenida */
+  .welcome-screen {
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    height: 100vh; background: #0066cc; color: white; text-align: center;
+  }
+  .welcome-screen img {
+    width: 80px; height: 80px; margin-bottom: 20px;
+  }
+  .welcome-screen h1 {
+    font-size: 2.5rem; margin: 0 0 15px 0; user-select: none;
+  }
+  .welcome-screen button {
+    background: white; color: #0066cc; font-size: 1.2rem; font-weight: bold;
+    padding: 12px 30px; border: none; border-radius: 25px;
+    cursor: pointer; transition: background-color 0.3s ease;
+  }
+  .welcome-screen button:hover {
+    background: #004a99; color: white;
+  }
+
+  /* App */
+  .app {
+    display: none;
+    flex-direction: column;
+    height: 100vh;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+  }
+  .app.visible {
+    display: flex;
+    opacity: 1;
+  }
+
+  nav {
+    background-color: #004a99;
+    color: white;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    padding: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 6px 12px;
+  }
+  nav a:hover {
+    background-color: #003366;
+    border-radius: 6px;
+  }
+
+  main {
+    padding: 20px;
+    max-width: 1200px;
+    margin: auto;
+    flex-grow: 1;
+    overflow-y: auto;
+    background: #fff;
+  }
+
+  section h2, section h3 {
+    border-bottom: 2px solid #004a99;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+  }
+
+  #map-container {
+    height: 500px;
+    width: 100%;
+  }
+
+  #map {
+    height: 100%;
+    width: 100%;
+  }
+
+  .layout {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+  }
+
+  #errorList {
+    width: 35%;
+    max-height: 500px;
+    overflow-y: auto;
+    border: 1px solid #f00;
+    padding: 5px;
+    background-color: #fee;
+    white-space: pre-wrap;
+    color: red;
+    font-size: 0.9em;
+  }
+
+  .btn {
+    background: #004a99;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  .btn:hover {
+    background: #003366;
+  }
+
+  label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  input[type=tel] {
+    width: 100%;
+    max-width: 300px;
+    padding: 6px 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 15px;
+  }
+</style>
 </head>
 <body>
 
-<!-- Welcome screen -->
+<!-- Pantalla de bienvenida -->
 <div class="welcome-screen" id="welcomeScreen">
-  <img src="assets/vote-icon.png" alt="Icono votar" />
+  <img src="https://img.icons8.com/ios-filled/100/ffffff/vote.png" alt="Icono votar" />
   <h1>Votar es Elegir</h1>
   <button id="enterBtn">Ingresar</button>
 </div>
 
-<!-- Main app -->
+<!-- Aplicación principal -->
 <div class="app" id="appContainer">
-  <div class="toolbar">
-    <h2>Parambiental - Control Electoral</h2>
-  </div>
+  <nav>
+    <a href="#subida">Subir Excel</a>
+    <a href="#mapa">Mapa y Errores</a>
+    <a href="#resumen">Resumen</a>
+  </nav>
   <main>
-    <section>
+    <section id="subida">
+      <h2>Sube archivos Excel y selecciona columna de dirección</h2>
+      <input type="file" id="inputExcel" accept=".xls,.xlsx" multiple />
+      <br />
+      <select id="columnSelector"></select>
+      <button id="processBtn" class="btn">Generar mapa</button>
+      <div id="status"></div>
+      <progress id="progressBar" max="100" value="0" style="display:none;"></progress>
+      <div id="progressText"></div>
+    </section>
+
+    <section id="mapa">
+      <h2>Mapa y Lista de Errores</h2>
+      <div class="layout">
+        <div id="map-container">
+          <div id="map"></div>
+        </div>
+        <div id="errorList"></div>
+      </div>
+    </section>
+
+    <section id="resumen">
+      <h2>Resumen de Partidos, Movimientos y Candidatos</h2>
       <label for="originNumber">Número telefónico de origen:</label>
       <input type="tel" id="originNumber" placeholder="+595XXXXXXXX" />
-    </section>
 
-    <section>
       <h3>Colores del Partido Político</h3>
       <ul class="color-list" id="partidosList"></ul>
-    </section>
 
-    <section>
       <h3>Colores del Movimiento</h3>
       <ul class="color-list" id="movimientosList"></ul>
-    </section>
 
-    <section>
       <h3>Colores del Candidato</h3>
       <ul class="color-list" id="candidatosList"></ul>
-    </section>
 
-    <section>
       <h3>Resumen gráfico</h3>
       <canvas id="graficoResumen" width="400" height="200"></canvas>
     </section>
   </main>
 </div>
 
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="script.js"></script>
+
+<script>
+  // Pantalla bienvenida
+  document.getElementById('enterBtn').addEventListener('click', () => {
+    document.getElementById('welcomeScreen').style.display = 'none';
+    const app = document.getElementById('appContainer');
+    app.classList.add('visible');
+    cargarListas();
+  });
+
+  // Datos de ejemplo
+  const partidos = [
+    { nombre: "Partido Azul", color: "#0044cc" },
+    { nombre: "Partido Rojo", color: "#cc0000" },
+    { nombre: "Partido Verde", color: "#009933" }
+  ];
+  const movimientos = [
+    { nombre: "Movimiento Libertad", color: "#ff9900" },
+    { nombre: "Movimiento Justicia", color: "#9900cc" }
+  ];
+  const candidatos = [
+    { nombre: "Juan Pérez", color: "#336699" },
+    { nombre: "María López", color: "#cc3366" },
+    { nombre: "Carlos Gómez", color: "#339966" }
+  ];
+
+  function cargarListas() {
+    const partidosUl = document.getElementById("partidosList");
+    const movimientosUl = document.getElementById("movimientosList");
+    const candidatosUl = document.getElementById("candidatosList");
+
+    partidosUl.innerHTML = movimientosUl.innerHTML = candidatosUl.innerHTML = "";
+
+    partidos.forEach(p => {
+      const li = document.createElement("li");
+      li.innerHTML = `<span class="color-box" style="background:${p.color}"></span> ${p.nombre}`;
+      partidosUl.appendChild(li);
+    });
+
+    movimientos.forEach(m => {
+      const li = document.createElement("li");
+      li.innerHTML = `<span class="color-box" style="background:${m.color}"></span> ${m.nombre}`;
+      movimientosUl.appendChild(li);
+    });
+
+    candidatos.forEach(c => {
+      const li = document.createElement("li");
+      li.innerHTML = `<span class="color-box" style="background:${c.color}"></span> ${c.nombre}`;
+      candidatosUl.appendChild(li);
+    });
+
+    generarGraficoResumen();
+  }
+
+  function generarGraficoResumen() {
+    const ctx = document.getElementById("graficoResumen").getContext("2d");
+    new Chart(ctx, {
+      type: "pie",
+      data: {
+        labels: ["Partidos", "Movimientos", "Candidatos"],
+        datasets: [{
+          label: "Cantidad",
+          data: [partidos.length, movimientos.length, candidatos.length],
+          backgroundColor: ["#0044cc", "#ff9900", "#336699"]
+        }]
+      }
+    });
+  }
+
+  // Variables mapa y carga Excel
+  const inputExcel = document.getElementById('inputExcel');
+  const columnSelector = document.getElementById('columnSelector');
+  const processBtn = document.getElementById('processBtn');
+  const statusDiv = document.getElementById('status');
+  const errorList = document.getElementById('errorList');
+  const progressBar = document.getElementById('progressBar');
+  const progressText = document.getElementById('progressText');
+
+  let allData = [];
+  let headers = [];
+
+  const map = L.map('map').setView([-25.2637, -57.5759], 11);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  inputExcel.addEventListener('change', async (e) => {
+    const files = e.target.files;
+    if (!files.length) return;
+
+    statusDiv.textContent = 'Leyendo archivos...';
+    errorList.textContent = '';
+    allData = [];
+    headers = [];
+    columnSelector.innerHTML = '';
+    columnSelector.style.display = 'none';
+    processBtn.style.display = 'none';
+
+    for (const file of files) {
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const data = new Uint8Array(arrayBuffer);
+        let workbook;
+        try {
+          workbook = XLSX.read(data, { type: 'array' });
+        } catch {
+          const binary = Array.from(data).map(b => String.fromCharCode(b)).join('');
+          workbook = XLSX.read(binary, { type: 'binary' });
+        }
+
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        const sheetData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false });
+
+        if (sheetData.length === 0) continue;
+
+        if (headers.length === 0) {
+          headers = sheetData[0];
+          headers.forEach((h, i) => {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = h || `Columna ${i + 1}`;
+            columnSelector.appendChild(option);
+          });
+          columnSelector.style.display = 'inline-block';
+          processBtn.style.display = 'inline-block';
+        }
+
+        allData = allData.concat(sheetData.slice(1));
+      } catch (error) {
+        console.error('Error leyendo archivo', file.name, error);
+        errorList.textContent += `Error leyendo archivo ${file.name}\n`;
+      }
+    }
+
+    statusDiv.textContent = `Archivos cargados. Selecciona columna de dirección y haz clic en "Generar mapa".`;
+  });
+
+  async function geocode(address) {
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`;
+    try {
+      const res = await fetch(url);
+      const json = await res.json();
+      if (json.length) {
+        return { lat: parseFloat(json[0].lat), lon: parseFloat(json[0].lon) };
+      }
+    } catch (e) {
+      console.warn('Error geocodificando:', address, e);
+    }
+    return null;
+  }
+
+  processBtn.addEventListener('click', async () => {
+    const colIndex = parseInt(columnSelector.value);
+    if (isNaN(colIndex)) {
+      alert('Selecciona una columna válida');
+      return;
+    }
+    if (allData.length === 0) {
+      alert('No hay datos para procesar');
+      return;
+    }
+
+    statusDiv.textContent = 'Geocodificando direcciones (puede tardar)...';
+    errorList.textContent = '';
+    progressBar.style.display = 'block';
+    progressBar.value = 0;
+    progressText.textContent = '';
+
+    // Elimina marcadores y círculos previos
+    map.eachLayer(layer => {
+      if (layer instanceof L.Marker || layer instanceof L.Circle) {
+        map.removeLayer(layer);
+      }
+    });
+
+    const total = allData.length;
+    let successCount = 0;
+    let failCount = 0;
+
+    for (let i = 0; i < total; i++) {
+      const row = allData[i];
+      const address = row[colIndex];
+      if (!address) {
+        failCount++;
+        errorList.textContent += `Fila ${i + 2}: dirección vacía\n`;
+        continue;
+      }
+
+      progressText.textContent = `Procesando ${i + 1} de ${total}...`;
+      progressBar.value = ((i) / total) * 100;
+
+      const coords = await geocode(address);
+      if (coords) {
+        successCount++;
+        const marker = L.marker([coords.lat, coords.lon]).addTo(map);
+        marker.bindPopup(`Dirección: ${address}`);
+        L.circle([coords.lat, coords.lon], { radius: 300, color: 'blue', fillOpacity: 0.2 }).addTo(map);
+      } else {
+        failCount++;
+        errorList.textContent += `Fila ${i + 2}: no se pudo geocodificar "${address}"\n`;
+      }
+
+      // Esperar 1 seg para no saturar el servicio
+      await new Promise(res => setTimeout(res, 1000));
+    }
+
+    progressBar.value = 100;
+    progressText.textContent = '';
+    progressBar.style.display = 'none';
+
+    statusDiv.textContent = `Geocodificación terminada. Éxitos: ${successCount}, Fallos: ${failCount}`;
+  });
+</script>
+
 </body>
 </html>
