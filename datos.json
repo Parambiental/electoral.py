@@ -1,0 +1,16 @@
+{
+  "partidos": [
+    { "nombre": "Partido Azul", "color": "#0044cc" },
+    { "nombre": "Partido Rojo", "color": "#cc0000" },
+    { "nombre": "Partido Verde", "color": "#009933" }
+  ],
+  "movimientos": [
+    { "nombre": "Movimiento Libertad", "color": "#ff9900" },
+    { "nombre": "Movimiento Justicia", "color": "#9900cc" }
+  ],
+  "candidatos": [
+    { "nombre": "Juan Pérez", "color": "#336699" },
+    { "nombre": "María López", "color": "#cc3366" },
+    { "nombre": "Carlos Gómez", "color": "#339966" }
+  ]
+}
