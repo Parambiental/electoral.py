@@ -3,10 +3,11 @@ electoral-app/
 │   └── favicon.ico
 ├── src/
 │   ├── components/
-│   │   ├── CandidateForm.js
+│   │   ├── PartyPanel.js
+│   │   ├── ElectorsUploader.js
 │   │   ├── ElectorsTable.js
 │   │   ├── MessagePreview.js
-│   │   └── PartyPanel.js
+│   │   └── CandidateForm.js
 │   ├── styles/
 │   │   └── main.css
 │   ├── data/
