@@ -5,3 +5,10 @@ export const electors = [
   { cedula: "4567890", nombre: "Ana González", telefono: "0984567890", local: "Centro Educativo Herrera", mesa: "21", orden: "311", lat: -25.27, lng: -57.55 },
   { cedula: "5678901", nombre: "Pedro Duarte", telefono: "0985678901", local: "Colegio Nacional", mesa: "14", orden: "177", lat: -25.26, lng: -57.54 }
 ];
+
+export const parties = [
+  { id: 1, nombre: "Partido Rojo", color: "#e74c3c" },
+  { id: 2, nombre: "Movimiento Azul", color: "#3498db" },
+  { id: 3, nombre: "Alianza Verde", color: "#27ae60" },
+  { id: 4, nombre: "Frente Naranja", color: "#e67e22" }
+];
