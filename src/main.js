@@ -1,26 +1,4 @@
-import App from './App.js';
-
-const app = App();
-document.getElementById('app').appendChild(app);
-
-
-/* Tabla */
-.table-wrapper {
-  overflow-x: auto;
-  margin-bottom: 20px;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-}
-th, td {
-  padding: 8px 10px;
-  border: 1px solid #ddd;
-  text-align: left;
-  vertical-align: middle;
-  font-size: 14px;
-}
+src/main.js
 th {
   background-color: #f0f0f0;
 }
