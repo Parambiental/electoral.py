@@ -87,3 +87,45 @@
   overflow-y: auto;
   background-color: var(--secondary-color);
 }
+/* Pantalla de bienvenida */
+.welcome-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #fff8e1, #ffe082);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.welcome-container {
+  text-align: center;
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  max-width: 400px;
+}
+
+.icono-voto {
+  width: 80px;
+  margin-bottom: 1rem;
+}
+
+.welcome-text {
+  margin-bottom: 1.5rem;
+  color: #444;
+}
+
+.button {
+  background: orange;
+  color: black;
+  padding: 0.7rem 1.2rem;
+  font-weight: bold;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.button:hover {
+  background: #ff9800;
+}
