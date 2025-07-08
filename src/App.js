@@ -1,34 +1,84 @@
 import CandidateForm from './components/CandidateForm.js';
+import ElectorsUploader from './components/ElectorsUploader.js';
 import ElectorsTable from './components/ElectorsTable.js';
 import MessagePreview from './components/MessagePreview.js';
+import { electors as mockElectors, parties as mockParties } from './data/mockData.js';
 
 export default function App() {
-  const container = document.createElement('div');
-  container.className = 'main-container';
+  const app = document.createElement('div');
 
-  // Estado compartido
+  // Estado
+  let electors = [...mockElectors];
+  let parties = [...mockParties];
   let candidateData = null;
-  let selectedElector = null;
 
-  // Crear componentes
-  const form = CandidateForm(onCandidateSubmit);
-  const preview = MessagePreview();
-  const table = ElectorsTable(onElectorSelect);
+  // Componentes
+  const candidateForm = CandidateForm(onCandidateSubmit);
+  const electorsUploader = ElectorsUploader(onElectorsLoaded);
+  const electorsTable = ElectorsTable(electors, parties, onElectorSelect);
+  const messagePreview = MessagePreview();
 
+  app.appendChild(candidateForm);
+  app.appendChild(electorsUploader);
+  app.appendChild(electorsTable.container);
+  app.appendChild(messagePreview.container);
+
+  // Funciones
   function onCandidateSubmit(data) {
     candidateData = data;
-    table.setCandidate(data);
-    preview.setCandidate(data);
+    updateMessagePreview(null);
   }
 
-  function onElectorSelect(elector) {
-    selectedElector = elector;
-    preview.setElector(elector);
+  function onElectorsLoaded(newElectors) {
+    // Opcional: validar estructura de datos
+    electors = newElectors.map(e => ({
+      ...e,
+      partido: e.partido || '',
+      cedula: e.cedula || '',
+      nombre: e.nombre || '',
+      telefono: e.telefono || '',
+      local: e.local || '',
+      mesa: e.mesa || '',
+      orden: e.orden || '',
+      lat: parseFloat(e.lat) || 0,
+      lng: parseFloat(e.lng) || 0
+    }));
+    electorsTable.render(electors);
+    updateMessagePreview(null);
   }
 
-  container.appendChild(form);
-  container.appendChild(preview);
-  container.appendChild(table);
+  function onElectorSelect(idx) {
+    updateMessagePreview(idx);
+  }
 
-  return container;
+  function updateMessagePreview(idx) {
+    if (!candidateData) {
+      messagePreview.setMessage('Por favor, cargá los datos del candidato/a antes.');
+      return;
+    }
+    if (idx === null || idx === undefined) {
+      messagePreview.setMessage('Seleccioná un elector para ver el mensaje.');
+      return;
+    }
+    const elector = electors[idx];
+    const msg = generarMensajeTexto(elector, candidateData);
+    const mapUrl = generarStaticMapURL(elector.lat, elector.lng);
+    messagePreview.setMessage(msg, mapUrl);
+  }
+
+  function generarMensajeTexto(elector, candidato) {
+    return `🗳️ Ficha Electoral\n\nNombre: ${elector.nombre}\nCédula: ${elector.cedula}\nLocal: ${elector.local}\nMesa: ${elector.mesa}\nOrden: ${elector.orden}\n\n${candidato.nombre} · Lista ${candidato.lista} · ${candidato.movimiento} · ${candidato.partido}\n${candidato.mensaje || ''}`;
+  }
+
+  function generarStaticMapURL(lat, lng) {
+    // Usamos Yandex Static Maps con marcador rojo estándar
+    return `https://static-maps.yandex.ru/1.x/?ll=${lng},${lat}&size=400,200&z=16&l=map&pt=${lng},${lat},pm2rdm`;
+  }
+
+  // Render inicial
+  electorsTable.render(electors);
+  messagePreview.setMessage('Por favor, cargá los datos del candidato/a antes.');
+
+  return app;
 }
+
