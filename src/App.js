@@ -1,3 +1,4 @@
+import PartyPanel from './components/PartyPanel.js';
 import CandidateForm from './components/CandidateForm.js';
 import ElectorsUploader from './components/ElectorsUploader.js';
 import ElectorsTable from './components/ElectorsTable.js';
@@ -7,30 +8,38 @@ import { electors as mockElectors, parties as mockParties } from './data/mockDat
 export default function App() {
   const app = document.createElement('div');
 
-  // Estado
-  let electors = [...mockElectors];
+  // Estado global
   let parties = [...mockParties];
+  let electors = [...mockElectors];
   let candidateData = null;
 
-  // Componentes
+  // Crear componentes
+  const partyPanel = PartyPanel(parties, onPartyColorChange);
   const candidateForm = CandidateForm(onCandidateSubmit);
   const electorsUploader = ElectorsUploader(onElectorsLoaded);
   const electorsTable = ElectorsTable(electors, parties, onElectorSelect);
   const messagePreview = MessagePreview();
 
+  // Agregar al DOM
+  app.appendChild(partyPanel);
   app.appendChild(candidateForm);
   app.appendChild(electorsUploader);
   app.appendChild(electorsTable.container);
   app.appendChild(messagePreview.container);
 
-  // Funciones
+  // Funciones para actualizar estado
+  function onPartyColorChange(index, color) {
+    parties[index].color = color;
+    // Actualizar tabla electores para reflejar colores nuevos
+    electorsTable.render(electors);
+  }
+
   function onCandidateSubmit(data) {
     candidateData = data;
     updateMessagePreview(null);
   }
 
   function onElectorsLoaded(newElectors) {
-    // Opcional: validar estructura de datos
     electors = newElectors.map(e => ({
       ...e,
       partido: e.partido || '',
@@ -71,7 +80,6 @@ export default function App() {
   }
 
   function generarStaticMapURL(lat, lng) {
-    // Usamos Yandex Static Maps con marcador rojo estándar
     return `https://static-maps.yandex.ru/1.x/?ll=${lng},${lat}&size=400,200&z=16&l=map&pt=${lng},${lat},pm2rdm`;
   }
 
@@ -81,4 +89,3 @@ export default function App() {
 
   return app;
 }
-
