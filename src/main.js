@@ -16,25 +16,40 @@ const routes = {
 
 // Función de enrutamiento
 function loadRoute() {
-  const hash = window.location.hash.replace('#', '') || 'electores';
+  const hash = window.location.hash.replace('#', '') || 'seleccion';
   const route = routes[hash];
+  const root = document.getElementById('app');
+  root.innerHTML = '';
 
-  const app = document.getElementById('app') || document.body;
+  let content;
 
   if (typeof route === 'function') {
-    // Vista HTML simple
-    app.innerHTML = route();
+    // Si retorna string HTML simple
+    const result = route();
+    content = typeof result === 'string'
+      ? createElementFromHTML(result)
+      : result; // o un elemento DOM
   } else if (typeof route === 'object' && route.render) {
-    // Vista tipo componente (como SeleccionView)
-    app.innerHTML = route.render();
+    // Si tiene método .render()
+    content = createElementFromHTML(route.render());
   } else {
-    app.innerHTML = `<h1>404</h1><p>Módulo no encontrado.</p>`;
+    content = createElementFromHTML('<h1>404 - Módulo no encontrado</h1>');
   }
+
+  const layout = App(content); // App(envuelve content)
+  root.appendChild(layout);
 
   updateActiveLink(hash);
 }
 
-// Actualiza los enlaces activos del nav
+// Utilidad para convertir string HTML en elementos DOM
+function createElementFromHTML(htmlString) {
+  const div = document.createElement('div');
+  div.innerHTML = htmlString.trim();
+  return div.firstElementChild || div;
+}
+
+// Actualiza los enlaces activos del menú
 function updateActiveLink(active) {
   const links = document.querySelectorAll('.nav-link');
   links.forEach(link => {
