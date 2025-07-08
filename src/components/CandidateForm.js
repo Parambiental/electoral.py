@@ -1,3 +1,4 @@
+// src/components/CandidateForm.js
 export default function CandidateForm(onSubmit) {
   const container = document.createElement('section');
   container.innerHTML = `
@@ -11,9 +12,9 @@ export default function CandidateForm(onSubmit) {
       <input type="text" name="movimiento" required />
       <label>Partido:</label>
       <input type="text" name="partido" required />
-      <label>Mensaje político:</label>
+      <label>Mensaje político (opcional):</label>
       <input type="text" name="mensaje" />
-      <button type="submit" class="btn">Aplicar datos</button>
+      <button type="submit" class="btn">Aplicar datos del candidato</button>
     </form>
   `;
 
@@ -29,7 +30,8 @@ export default function CandidateForm(onSubmit) {
       partido: formData.get('partido'),
       mensaje: formData.get('mensaje')
     };
-    onSubmit(data);
+    onSubmit(data); // Llama al callback para notificar a App.js
+    alert('Datos del candidato actualizados!'); // Feedback al usuario
   });
 
   return container;
