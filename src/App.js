@@ -1,25 +1,21 @@
-// app.js
-export default function App(contentComponent) {
-  const container = document.createElement('div');
-  container.className = 'layout';
-
-  // Sidebar
-  const sidebar = document.createElement('aside');
-  sidebar.className = 'sidebar';
-  sidebar.innerHTML = `
-    <h2 class="sidebar-title">Panel Electoral</h2>
-    <nav class="sidebar-nav">
-      <ul>
-        <li><a href="#seleccion" class="nav-link">Inicio</a></li>
-        <li><a href="#admin" class="nav-link">Administrador</a></li>
-        <li><a href="#electores" class="nav-link">Electores</a></li>
-        <li><a href="#candidatos" class="nav-link">Candidatos</a></li>
-        <li><a href="#movimientos" class="nav-link">Movimientos</a></li>
-        <li><a href="#partidos" class="nav-link">Partidos</a></li>
-        <li><a href="#resumen" class="nav-link">Resumen</a></li>
-      </ul>
-    </nav>
+export function App(contentComponent) {
+  return `
+    <div class="layout">
+      <aside class="sidebar">
+        <h2 class="sidebar-title">Panel Electoral</h2>
+        <nav class="sidebar-nav">
+          <ul>
+            <li><a href="#seleccion" class="nav-link">Inicio</a></li>
+            <li><a href="#admin" class="nav-link">Administrador</a></li>
+          </ul>
+        </nav>
+      </aside>
+      <main class="main-content">
+        ${contentComponent()}
+      </main>
+    </div>
   `;
+}
 
   // Main content area (vacío inicialmente)
   const main = document.createElement('main');
