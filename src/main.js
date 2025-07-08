@@ -1,21 +1,7 @@
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #fafafa;
-  color: #222;
-  margin: 0;
-  padding: 0;
-}
+import App from './App.js';
 
-#app {
-  max-width: 1100px;
-  margin: 20px auto;
-  padding: 10px;
-}
-
-h2 {
-  color: #003366;
-  margin-bottom: 12px;
-}
+const app = App();
+document.getElementById('app').appendChild(app);
 
 /* Botones */
 .btn {
